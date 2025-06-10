@@ -1,0 +1,74 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Class {
+  id         String           @id @default(auto()) @map("_id") @db.ObjectId
+  //ClassId    Int              @unique 
+  ClassName       String           @unique
+  formLevel  Int
+  stream     String?           
+  timetables Timetable[]
+  subjectTeachers  SubjectTeacher[]
+  timetableEntries TimetableEntry[]
+}
+
+model Subject {
+  id               String           @id @default(auto()) @map("_id") @db.ObjectId
+  subjectName             String           @unique
+  code             String?          @unique
+  teachers         SubjectTeacher[] // Updated to use a join table for many-to-many relationship
+  timetableEntries TimetableEntry[]
+}
+
+model Teacher {
+  id               String           @id @default(auto()) @map("_id") @db.ObjectId
+  teacherId        Int              @unique
+  teacherName             String          @unique
+  subjects         SubjectTeacher[] // Updated to use a join table for many-to-many relationship
+  timetableEntries TimetableEntry[]
+}
+
+model SubjectTeacher {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  subject    Subject  @relation(fields: [code], references: [code])
+  code       String
+  teacher    Teacher  @relation(fields: [teacherName], references: [teacherName]) // Use `id` as the unique reference
+  teacherName  String    // Update to reference the unique `id` field in the `Teacher` model
+  class      Class    @relation(fields: [ClassName], references: [ClassName])
+  ClassName    String   
+
+  @@unique([code, teacherName, ClassName]) // Ensure unique combinations of subject, teacher, and class
+}
+
+model Timetable {
+  id        String           @id @default(auto()) @map("_id") @db.ObjectId
+  class     Class            @relation(fields: [classId], references: [id])
+  classId   String           @db.ObjectId
+  entries   TimetableEntry[]
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+}
+
+model TimetableEntry {
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  timetable   Timetable    @relation(fields: [timetableId], references: [id])
+  timetableId String       @db.ObjectId
+  weekday     String
+  subject     Subject      @relation(fields: [subjectName], references: [subjectName])
+  subjectName   String      
+  teacher     Teacher      @relation(fields: [teacherName], references: [teacherName])
+  teacherId   Int       
+  teacherName String
+  class     Class      @relation(fields: [ClassName], references: [ClassName])
+  ClassName   String
+  startTime   DateTime
+  endTime     DateTime
+  isDouble    Boolean      @default(false)
+  slotIndex   Int?
+}
