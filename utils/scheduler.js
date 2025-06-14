@@ -78,7 +78,7 @@ export async function generateTimetableForAllClasses() {
     timetableEntries.push({
       weekday: day,
       subjectName: subject.subjectName,
-      teacherId: teacher.id,
+      //teacherId: teacher.id,
       teacherName: teacher.teacherName,
       ClassName: classObj.ClassName,
       startTime: start,
