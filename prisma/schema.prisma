@@ -63,7 +63,7 @@ model TimetableEntry {
   subject     Subject      @relation(fields: [subjectName], references: [subjectName])
   subjectName   String      
   teacher     Teacher      @relation(fields: [teacherName], references: [teacherName])
- // teacherId   String     
+  teacherId   Int       
   teacherName String
   class     Class      @relation(fields: [ClassName], references: [ClassName])
   ClassName   String
