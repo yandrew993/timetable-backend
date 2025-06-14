@@ -11,6 +11,16 @@ export const getAllClasses = async (req, res) => {
   }
 };
 
+export const getTotalTeachersCount = async (req, res) => {
+  try {
+    const count = await prisma.class.count();
+    res.status(200).json({ totalClasses: count });
+  } catch (error) {
+    console.error("Error counting teachers:", error);
+    res.status(500).json({ error: "Failed to count teachers" });
+  }
+};
+
 export const createClass = async (req, res) => {
   const {ClassName, formLevel, stream } = req.body;
   try {
@@ -27,5 +37,6 @@ export const createClass = async (req, res) => {
 //Export all functions for use 
 export default {
   getAllClasses,
+  getTotalTeachersCount,
   createClass
 };

@@ -13,6 +13,16 @@ export const getAllTeachers = async (req, res) => {
   }
 };
 
+export const getTotalTeachersCount = async (req, res) => {
+  try {
+    const count = await prisma.teacher.count();
+    res.status(200).json({ totalTeachers: count });
+  } catch (error) {
+    console.error("Error counting teachers:", error);
+    res.status(500).json({ error: "Failed to count teachers" });
+  }
+};
+
 export const createTeacher = async (req, res) => {
   const { teacherId, teacherName } = req.body;
   try {
@@ -104,8 +114,60 @@ export const assignTeacherToSubject = async (req, res) => {
       .json({ error: "Failed to assign teacher to subject" });
   }
 };
+
+//Unassign a teacher from a subject in subjectTeacher table
+export const unassignTeacherFromSubject = async (req, res) => {
+  const { code, teacherName, ClassName } = req.body;
+
+  // Validate input
+  if (!code || !teacherName || !ClassName) {
+    return res.status(400).json({
+      error: "Subject code, teacher name, and class name are required",
+    });
+  }
+
+  try {
+    // Find the SubjectTeacher record
+    const subjectTeacher = await prisma.subjectTeacher.findFirst({
+      where: {
+        code,
+        teacherName,
+        ClassName,
+      },
+    });
+
+    if (!subjectTeacher) {
+      return res.status(404).json({
+        error: `No assignment found for subject '${code}', teacher '${teacherName}', and class '${ClassName}'`,
+      });
+    }
+
+    // Delete the SubjectTeacher record
+
+    await prisma.subjectTeacher.delete({
+      where: {
+        id: subjectTeacher.id,
+      },
+    });
+
+    return res.status(200).json({
+      message: `Successfully unassigned teacher '${teacherName}' from subject '${code}' for class '${ClassName}'`,
+    });
+  } catch (error) {
+    console.error("Error unassigning teacher from subject:", error);
+    return res.status(500).json({
+      error: "Failed to unassign teacher from subject",
+    });
+  }
+};
+
+
+    
+
+
 export default {
   getAllTeachers,
+  getTotalTeachersCount,
   createTeacher,
   assignTeacherToSubject,
 };

@@ -24,6 +24,26 @@ export const generateTimetableForAllClassesController = async (req, res) => {
   }
 };
 
+export const getAllTableEntries = async (req, res) => {
+  try {
+    const classes = await prisma.timetableEntry.findMany();
+    res.status(200).json(classes);
+  } catch (error) {
+    console.error('Error fetching timetable entries:', error);
+    res.status(500).json({ error: 'Failed to fetch entries' });
+  }
+};
+
+export const getTotalLessonsCount = async (req, res) => {
+  try {
+    const count = await prisma.timetableEntry.count();
+    res.status(200).json({ totalLessons: count });
+  } catch (error) {
+    console.error("Error counting teachers:", error);
+    res.status(500).json({ error: "Failed to count teachers" });
+  }
+};
+
 // Total number of lessons assigned to each teacher from timetable entries
 export const getTeacherLessonCount = async (req, res) => {
   try {
@@ -48,7 +68,23 @@ export const getTeacherLessonCount = async (req, res) => {
 };
 
 
+
+export const deleteAllTimetableEntries = async (req, res) => {
+  try {
+    await prisma.timetableEntry.deleteMany({});
+    res.status(200).json({ message: 'All timetable entries deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting timetable entries:', error);
+    res.status(500).json({ error: 'Failed to delete timetable entries' });
+  }
+};
+
+
+
 export default {
   generateTimetableForAllClassesController,
-  getTeacherLessonCount
+  getTeacherLessonCount,
+  getTotalLessonsCount,
+  getAllTableEntries,
+  deleteAllTimetableEntries
 };
