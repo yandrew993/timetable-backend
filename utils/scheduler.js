@@ -288,7 +288,7 @@ export async function generateTimetableForAllClasses() {
           create: timetableEntries.map((entry) => ({
             weekday: entry.weekday,
             subjectName: entry.subjectName,
-            teacherId: entry.teacherId,
+           //teacherId: entry.teacherId,
             teacherName: entry.teacherName,
             ClassName: entry.ClassName,
             startTime: entry.startTime,
