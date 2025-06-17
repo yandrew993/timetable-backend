@@ -7,6 +7,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId // Unique identifier for the user
+  name      String   // Name of the user
+  userId    String   @unique // Unique user ID (e.g., studentId or teacherId)
+  password  String   // Hashed password
+  role      String   // Role of the user (e.g., student, teacher, librarian)
+  createdAt DateTime @default(now()) // Timestamp for when the user was created
+  updatedAt DateTime @updatedAt // Timestamp for when the user was last updated
+}
+
 model Class {
   id         String           @id @default(auto()) @map("_id") @db.ObjectId
   //ClassId    Int              @unique 

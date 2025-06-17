@@ -4,7 +4,7 @@ import timetableRoutes from './routes/timeTableRoute.js'; // Adjust the path as 
 import teacherRoutes from './routes/teacherRoute.js';
 import subjectRoutes from './routes/subjectRoute.js'; // Assuming you have a subject route
 import classRoutes from './routes/classRoute.js'; // Assuming you have a class route
-
+import authRoutes from './routes/authRoute.js';
 const app = express();
 
 // Enable CORS
@@ -15,6 +15,7 @@ app.use(cors({
 }));
 
 app.use(express.json());
+app.use('/api', authRoutes); // Use the auth routes
 app.use('/api', timetableRoutes);
 app.use('/api', teacherRoutes);
 app.use('/api', subjectRoutes); // Use the subject routes
